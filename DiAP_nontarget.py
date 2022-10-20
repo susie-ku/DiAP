@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import tensorflow_addons as tfa
 import math
 from matplotlib import pylab as P
 
@@ -295,7 +296,7 @@ class ModelContainer():
 				modified_patch = tf.image.resize(patch, (224, 224))
 
 			self.dropout = tf.compat.v1.placeholder_with_default(1.0, [])
-			patch_with_dropout = tf.nn.dropout(modified_patch, keep_prob=self.dropout)
+			patch_with_dropout = tf.compat.v1.nn.dropout(modified_patch, keep_prob=self.dropout)
 			patched_input = clip_to_valid_image(self._random_overlay(image_input, patch_with_dropout, image_shape))
 
 			def to_keras(x):
@@ -386,13 +387,13 @@ class ModelContainer():
 
 		for i in range(BATCH_SIZE):
 			# Shift and scale the patch for each image in the batch
-			random_xform_vector = tf.py_func(_random_transformation, [self.scale_min, self.scale_max, image_shape[0]],
+			random_xform_vector = tf.numpy_function(_random_transformation, [self.scale_min, self.scale_max, image_shape[0]],
 			                                 tf.float32)
 			random_xform_vector.set_shape([8])
 			transform_vecs.append(random_xform_vector)
 
-		image_mask = tf.contrib.image.transform(image_mask, transform_vecs, "BILINEAR")
-		padded_patch = tf.contrib.image.transform(padded_patch, transform_vecs, "BILINEAR")
+		image_mask = tfa.image.transform(image_mask, transform_vecs, "BILINEAR")
+		padded_patch = tfa.image.transform(padded_patch, transform_vecs, "BILINEAR")
 		inverted_mask = (1 - image_mask)
 		return imgs * inverted_mask + padded_patch * image_mask
 
