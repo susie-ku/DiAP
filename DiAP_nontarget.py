@@ -30,7 +30,7 @@ NAME_TO_MODEL = {
     'xception': applications.xception.Xception,
     'vgg16': applications.vgg16.VGG16,
     'vgg19': applications.vgg19.VGG19,
-    'resnet50': applications.resnet50.ResNet50,
+    'resnet50': applications.ResNet50,
     'inceptionv3': applications.inception_v3.InceptionV3,
 }
 
@@ -283,7 +283,7 @@ class ModelContainer():
 			image_input = self._image_input
 			patch = tf.compat.v1.get_variable("patch", self.patch_shape, dtype=tf.float32, initializer=tf.zeros_initializer)
 			self._patch_placeholder = tf.compat.v1.placeholder(dtype=tf.float32, shape=self.patch_shape)
-			self._assign_patch = tf.assign(patch, self._patch_placeholder)
+			self._assign_patch = tf.compat.v1.assign(patch, self._patch_placeholder)
 			modified_patch = patch
 			def clip_to_valid_image(x):
 				return tf.clip_by_value(x, clip_value_min=-1., clip_value_max=1.)
