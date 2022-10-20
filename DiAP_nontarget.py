@@ -324,7 +324,7 @@ class ModelContainer():
 
 			# Pre-softmax logits of our pretrained model
 			self.logits = model.outputs[0].op.inputs[0]
-			self._loss_per_example = tf.nn.softmax_cross_entropy_with_logits_v2(
+			self._loss_per_example = tf.nn.softmax_cross_entropy_with_logits(
 				labels=self._target_ys,
 				logits=self.logits
 			)
